@@ -281,6 +281,20 @@ df_china_soil_carb <- df_china_soil_carb %>%
   mutate(Region = "China")
 #create combined df
 df_combined <- bind_rows(df_global_soil_carb, df_china_soil_carb)
+#reorder variables
+combined_order <- c(
+  "Total N", "Available N",
+  "Total P", "Available P",
+  "Total C",
+  "Soil Organic C", "Soil Inorganic C",
+  "Bulk Density",
+  "Soil Moisture Content",
+  "Soil Erosion",
+  "Runoff"
+)
+df_combined <- df_combined %>%
+  mutate(variable = factor(variable, levels = combined_order))
+
 #plot
 combined_soil_plot <- ggplot(df_combined,
                              aes(y = variable, x = EffectSize, color = Region)) +
@@ -294,6 +308,7 @@ combined_soil_plot <- ggplot(df_combined,
             show.legend = FALSE) +  
   labs(title = NULL,
        y = NULL, x = "Percentage change") +
+  scale_y_discrete(limits = rev(combined_order)) +
   theme_cowplot() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   geom_vline(xintercept = 0, linetype = "dashed") +
